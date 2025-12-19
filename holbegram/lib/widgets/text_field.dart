@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TextFieldInput extends StatelessWidget {
   final TextEditingController controller;
-  final bool ispassword; // Correction du nom selon la consigne
+  final bool ispassword;
   final String hintText;
   final Widget? suffixIcon;
   final TextInputType keyboardType;
@@ -10,10 +10,10 @@ class TextFieldInput extends StatelessWidget {
   const TextFieldInput({
     super.key,
     required this.controller,
-    required this.ispassword, // Doit être requis
+    required this.ispassword,
     required this.hintText,
     this.suffixIcon,
-    required this.keyboardType, // Doit être requis
+    required this.keyboardType,
   });
 
   @override
