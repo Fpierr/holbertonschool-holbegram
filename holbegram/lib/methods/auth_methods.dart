@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:holbegram/models/user.dart';
+import 'package:holbegram/screens/auth/methods/user_storage.dart';
 
 class AuthMethode {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -46,12 +47,22 @@ class AuthMethode {
         User? user = userCredential.user;
 
         if (user != null) {
+          String photoUrl = "";
+
+          if (file != null) {
+            photoUrl = await StorageMethods().uploadImageToStorage(
+              false,
+              "profilePics",
+              file,
+            );
+          }
+
           Users users = Users(
             uid: user.uid,
             email: email,
             username: username,
             bio: "",
-            photoUrl: "",
+            photoUrl: photoUrl,
             followers: [],
             following: [],
             posts: [],
@@ -77,10 +88,8 @@ class AuthMethode {
 
   Future<Users> getUserDetails() async {
     User currentUser = _auth.currentUser!;
-
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
-
     return Users.fromSnap(snap);
   }
 }

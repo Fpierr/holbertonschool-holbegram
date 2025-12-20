@@ -125,9 +125,12 @@ class _AddPictureState extends State<AddPicture> {
                 ));
 
                 if (res == "success") {
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Success")),
                   );
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (route) => false);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(res)),

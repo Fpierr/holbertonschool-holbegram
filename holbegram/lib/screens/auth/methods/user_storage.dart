@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class StorageMethods {
   final String cloudinaryUrl =
-      "https://api.cloudinary.com/v1_1/your-cloud-name/image/upload";
+      "https://api.cloudinary.com/v1_1/dikwifbch/image/upload";
   final String cloudinaryPreset = "holbegram_fanuel";
 
   Future<String> uploadImageToStorage(
