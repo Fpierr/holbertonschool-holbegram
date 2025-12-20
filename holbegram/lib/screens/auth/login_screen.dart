@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:holbegram/screens/signup_screen.dart';
+import 'package:holbegram/screens/auth/signup_screen.dart';
 import 'package:holbegram/widgets/text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,12 +12,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool _passwordVisible = true;
+  bool _passwordVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _passwordVisible = true;
+    _passwordVisible = false;
   }
 
   @override
@@ -67,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
                       alignment: Alignment.bottomLeft,
+                      color: const Color.fromARGB(218, 226, 37, 24),
                       icon: Icon(
                         _passwordVisible
                             ? Icons.visibility

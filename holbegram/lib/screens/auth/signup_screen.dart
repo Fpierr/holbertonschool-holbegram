@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:holbegram/screens/auth/upload_image_screen.dart';
 import 'package:holbegram/widgets/text_field.dart';
-import 'package:holbegram/screens/login_screen.dart';
+import 'package:holbegram/screens/auth/login_screen.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -15,12 +16,12 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordConfirmController =
       TextEditingController();
-  bool _passwordVisible = true;
+  bool _passwordVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _passwordVisible = true;
+    _passwordVisible = false;
   }
 
   @override
@@ -91,6 +92,7 @@ class _SignUpState extends State<SignUp> {
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
                       alignment: Alignment.bottomLeft,
+                      color: const Color.fromARGB(218, 226, 37, 24),
                       icon: Icon(
                         _passwordVisible
                             ? Icons.visibility
@@ -111,6 +113,7 @@ class _SignUpState extends State<SignUp> {
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
                       alignment: Alignment.bottomLeft,
+                      color: const Color.fromARGB(218, 226, 37, 24),
                       icon: Icon(
                         _passwordVisible
                             ? Icons.visibility
@@ -133,7 +136,18 @@ class _SignUpState extends State<SignUp> {
                           const Color.fromARGB(218, 226, 37, 24),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddPicture(
+                              email: emailController.text,
+                              password: passwordController.text,
+                              username: usernameController.text,
+                            ),
+                          ),
+                        );
+                      },
                       child: const Text(
                         'Sign up',
                         style: TextStyle(color: Colors.white),
