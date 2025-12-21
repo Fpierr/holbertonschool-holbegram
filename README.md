@@ -30,6 +30,7 @@ Let’s begin this exciting journey.
 - [Cached network image](https://pub.dev/packages/flutter_staggered_grid_view)
 - [Flutter Pull To Refresh](https://pub.dev/packages/pull_to_refresh#flutter_pulltorefresh)
 - [Billabong font](https://fontsfree.net/billabong-font-download.html)
+- [BottomNavyBar](https://pub.dev/packages/bottom_navy_bar)
 
 ## Requirements
 #### Create your project :
