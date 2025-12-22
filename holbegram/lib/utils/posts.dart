@@ -18,7 +18,10 @@ class _PostsState extends State<Posts> {
     final Users? user = Provider.of<UserProvider>(context).getUser;
 
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('posts')
+          .orderBy('datePublished', descending: true)
+          .snapshots(),
       builder: (context,
           AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
         if (snapshot.hasError) {
@@ -32,120 +35,91 @@ class _PostsState extends State<Posts> {
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var data = snapshot.data!.docs[index].data();
+            bool isLiked = user != null && data['likes'].contains(user.uid);
 
-            return SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsetsGeometry.lerp(
-                  const EdgeInsets.all(8),
-                  const EdgeInsets.all(8),
-                  10,
-                ),
-                height: 540,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: NetworkImage(data['profImage']),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            data['username'],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          if (user?.uid == data['uid'])
-                            IconButton(
-                              icon: const Icon(Icons.more_horiz),
-                              onPressed: () async {
-                                await PostStorage().deletePost(
-                                  data['postId'].toString(),
-                                  data['postUrl'].toString(),
-                                );
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Post Deleted")),
-                                  );
-                                }
-                              },
-                            ),
-                        ],
-                      ),
+            return Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: (data['profImage'] != null &&
+                              data['profImage'].isNotEmpty)
+                          ? NetworkImage(data['profImage'])
+                          : const AssetImage(
+                                  'assets/images/Sample_User_Icon.png')
+                              as ImageProvider,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(data['caption']),
-                      ),
+                    title: Text(data['username'] ?? '',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: user?.uid == data['uid']
+                        ? IconButton(
+                            icon: const Icon(Icons.more_horiz),
+                            onPressed: () => PostStorage()
+                                .deletePost(data['postId'], data['postUrl']),
+                          )
+                        : null,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(data['caption'] ?? ''),
                     ),
-                    const SizedBox(height: 10),
-                    Container(
-                      width: 350,
+                  ),
+                  const SizedBox(height: 10),
+                  if (data['postUrl'] != null && data['postUrl'].isNotEmpty)
+                    Image.network(
+                      data['postUrl'],
                       height: 350,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        image: DecorationImage(
-                          image: NetworkImage(data['postUrl']),
-                          fit: BoxFit.cover,
-                        ),
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 350,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.broken_image),
                       ),
                     ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            data['likes'].contains(user?.uid)
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: data['likes'].contains(user?.uid)
-                                ? Colors.red
-                                : Colors.black,
-                          ),
-                          onPressed: () {},
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: isLiked ? Colors.red : Colors.black,
                         ),
-                        IconButton(
+                        onPressed: () {
+                          if (user != null) {
+                            PostStorage().likePost(
+                                data['postId'], user.uid, data['likes']);
+                          }
+                        },
+                      ),
+                      IconButton(
                           icon: const Icon(Icons.chat_bubble_outline),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.send),
-                          onPressed: () {},
-                        ),
-                        const Spacer(),
-                        IconButton(
+                          onPressed: () {}),
+                      IconButton(
+                          icon: const Icon(Icons.send), onPressed: () {}),
+                      const Spacer(),
+                      IconButton(
                           icon: const Icon(Icons.bookmark_border),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "${data['likes']?.length ?? 0} Liked",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                          onPressed: () {}),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15, bottom: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${(data['likes'] as List).length} Liked",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
