@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:holbegram/screens/pages/feed.dart';
 import 'package:holbegram/screens/pages/search.dart';
 import 'package:holbegram/screens/pages/add_image.dart';
-import 'package:holbegram/screens/pages/favorate.dart';
+import 'package:holbegram/screens/pages/favorite.dart';
 import 'package:holbegram/screens/pages/profile_screen.dart';
 
 class BottomNav extends StatefulWidget {
@@ -39,10 +39,10 @@ class _BottomNavState extends State<BottomNav> {
         },
         children: const [
           Feed(),
-          // Search(),
-          // AddImage(),
-          // Favorite(),
-          // Profile(),
+          Search(),
+          AddImage(),
+          Favorite(),
+          Profile(),
         ],
       ),
       bottomNavigationBar: BottomNavyBar(
